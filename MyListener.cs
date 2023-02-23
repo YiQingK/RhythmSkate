@@ -26,65 +26,8 @@ public class MyListener : MonoBehaviour
     }
     void Update() // Update is called once per frame
     {
-        Vector3 pos = transform.position;
-        //Checks current line is not target line
-        if(!line.Equals(targetline))
-        {
-            //Checks if target line is 0
-            if(targetline == 0 && pos.x<-laneDistance)
-            {
-                transform.position = new Vector3(-laneDistance,pos.y,pos.z);
-                line = targetline;
-                canmove = true;
-                movec.x =0;
-            }
-            //Checks if target line is 1
-            else if(targetline== 1 && (pos.x >0 || pos.x <0))
-            {
-                //Checks if it is currently on 0 
-                if(line ==0 && pos.x>0)
-                {
-                    transform.position = new Vector3(0,pos.y,pos.z);
-                    line = targetline;
-                    canmove = true;
-                    movec.x =0;
-                }
-                //Checks if it is currently on 2
-                else if(line ==2 && pos.x<0)
-                {
-                    transform.position = new Vector3(0,pos.y,pos.z);
-                    line = targetline;
-                    canmove = true;
-                    movec.x =0;
-                }
-            }
-            //Check if target line is 2
-            else if(targetline==2 && pos.x>laneDistance)
-            {
-                transform.position = new Vector3(laneDistance,pos.y,pos.z);
-                line = targetline;
-                canmove = true;
-                movec.x =0;
-            }
-        }
-        checkInput();
+        Move();
         cc.Move(movec*Time.deltaTime*50);
-    }
-
-    void checkInput()
-    {
-        if( Input.GetKeyDown(KeyCode.LeftArrow) && canmove && line>0)
-        {
-            targetline--;
-            canmove = false;
-            movec.x = -4;
-        }
-        if(Input.GetKeyDown(KeyCode.RightArrow) && canmove && line<2)
-        {
-            targetline++;
-            canmove = false;
-            movec.x = 4;
-        }
     }
 
     void checkArduinoInput(float button)
@@ -107,6 +50,13 @@ public class MyListener : MonoBehaviour
     {
         Debug.Log(msg);
         float button = float.Parse(msg);
+        Move();
+        checkArduinoInput(button);
+        cc.Move(movec*Time.deltaTime*50);
+    }
+
+    void Move()
+    {
         Vector3 pos = transform.position;
         //Checks current line is not target line
         if(!line.Equals(targetline))
@@ -148,8 +98,6 @@ public class MyListener : MonoBehaviour
                 movec.x =0;
             }
         }
-        checkArduinoInput(button);
-        cc.Move(movec*Time.deltaTime*50);
     }
 
     // Invoked when a connect/disconnect event occurs. The parameter 'success'
